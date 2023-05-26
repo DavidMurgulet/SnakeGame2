@@ -1,4 +1,6 @@
 const gameBoard = document.querySelector(".game-board");
+const scoreElement = document.querySelector(".score"); 
+const highScoreElement = document.querySelector(".high-score");
 
 
 
@@ -10,12 +12,29 @@ let gameEnd = false;
 let setIntervalId; 
 snakeY = 15;
 snakeX = 3;
+let score = 0;
+let highscore = 0;
+
+let highScore = localStorage.getItem("high-score") || 0;
+highScoreElement.innerText = `High Score: ${highScore}`;
 
 
 const handleGameOver = () => {
     clearInterval(setIntervalId);
     alert("Game Over!");
     location.reload();
+}
+
+const setupRandom = () => {
+
+}
+
+const showFood = () => {
+    // velocityX = 0;
+    // velocityY = 1;
+    // snakeX = 20;
+    // snakeY = 0
+
 }
 
 const initGame = () => {
@@ -26,9 +45,25 @@ const initGame = () => {
     htmlMarkup += `<div class="head" style="grid-area: ${snakeY} / ${snakeX}"></div>`;
 
 
+    // score 10 check
+    if (score == 2) {
+        showFood();
+        setupRandom();
+    }
+
+    // hit food check
     if (snakeX == foodX && snakeY == foodY) {
         changeFoodPos();
         snakeBody.push([foodX, foodY]);
+        score++;
+
+        if (score >= highScore) {
+            highScore = score;
+        }
+
+        localStorage.setItem("high-score", highScore);
+        scoreElement.innerText = `Score: ${score}`; 
+        highScoreElement.innerText = `High Score: ${highScore}`;
     }
 
     for (let i = snakeBody.length - 1; i > 0; i--) {
@@ -54,8 +89,8 @@ const initGame = () => {
     gameBoard.innerHTML = htmlMarkup;
 } 
 
-const changeDirection = (e) => {
-    if (e.key == "ArrowUp" && velocityY != -1) {
+const changeDirection = e => {
+    if (e.key === "ArrowUp" && velocityY != -1) {
         velocityX = 0;
         velocityY = -1;
     } else if (e.key === "ArrowDown" && velocityY != -1) {
@@ -76,5 +111,5 @@ const changeFoodPos = () => {
 }
 
 changeFoodPos();
-setIntervalId = setInterval(initGame, 150);
+setIntervalId = setInterval(initGame, 100);
 document.addEventListener("keydown", changeDirection);
